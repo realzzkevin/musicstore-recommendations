@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    image: music-store-recommendation-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    restart: always
+    ports:
+      - '3306:3306'
+    volumes:
+      - "C:\javaBootcamp\Final project\local\musicstore-recommendations\db\data":/var/lib/mysql
+    networks:
+      - rsvpnetwork
+
+  app:
+    image: music-store-recommendation-server
+    restart: always
+    ports:
+      - '7888:788'
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/music-store-recommendation-db?useSSL=false&serverTimezone=US/Eastern&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    depends_on:
+      - db
+    networks:
+      - rsvpnetwork
+
+networks:
+  rsvpnetwork:
+    driver: bridge
