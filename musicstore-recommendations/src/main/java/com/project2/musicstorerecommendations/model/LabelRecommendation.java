@@ -14,12 +14,13 @@ public class LabelRecommendation {
     @Column(name = "label_recommendation_id")
     private Long id;
 
-    @NotNull
+    @NotNull(message = "Missing label id")
     @Column(name = "label_id")
     private Long labelId;
-    @NotNull
+    @NotNull(message = "Missing user id")
     @Column(name = "user_id")
     private Long userId;
+    @NotNull(message = "Missing liked")
     private Boolean liked;
 
     public LabelRecommendation() {

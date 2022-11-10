@@ -3,6 +3,7 @@ package com.project2.musicstorerecommendations.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
@@ -13,12 +14,15 @@ public class AlbumRecommendation {
     @Column(name = "album_recommendation_id ")
     private Long id;
 
+    @NotNull(message = "Missing album id")
     @Column(name = "album_id")
     private Long albumId;
 
+    @NotNull(message ="Missing user id")
     @Column(name = "userId")
     private Long userId;
 
+    @NotNull(message = "Missing liked")
     private Boolean liked;
 
     public AlbumRecommendation() {

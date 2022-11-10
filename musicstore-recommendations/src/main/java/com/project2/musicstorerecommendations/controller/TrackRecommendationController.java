@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,14 +33,18 @@ public class TrackRecommendationController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public TrackRecommendation addTrackRecommendation(@RequestBody TrackRecommendation trackRecomm) {
+    public TrackRecommendation addTrackRecommendation(@RequestBody @Valid TrackRecommendation trackRecomm) {
         return repo.save(trackRecomm);
     }
 
     @PutMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateTrackRecommendation(@RequestBody TrackRecommendation trackRecomm) {
-        repo.save(trackRecomm);
+    public void updateTrackRecommendation(@RequestBody @Valid TrackRecommendation trackRecomm) {
+        if (trackRecomm.getId() != null) {
+            repo.save(trackRecomm);
+        } else {
+            throw new IllegalArgumentException("track recommendation id not present");
+        }
     }
 
     @DeleteMapping("/{id}")

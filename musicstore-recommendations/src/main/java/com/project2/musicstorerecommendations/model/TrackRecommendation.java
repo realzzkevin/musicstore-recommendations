@@ -3,6 +3,7 @@ package com.project2.musicstorerecommendations.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
@@ -14,11 +15,14 @@ public class TrackRecommendation {
     @Column(name = "track_recommendation_id")
     private Long id;
 
+    @NotNull(message = "Missing track id")
     @Column(name = "track_id")
     private Long trackId;
+    @NotNull(message = "Missing user id")
     @Column(name = "user_id")
     private Long userId;
 
+    @NotNull(message = "Missing liked")
     private Boolean liked;
 
     public TrackRecommendation() {

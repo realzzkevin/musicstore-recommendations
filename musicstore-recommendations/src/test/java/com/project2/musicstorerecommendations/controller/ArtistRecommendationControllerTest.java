@@ -1,6 +1,7 @@
 package com.project2.musicstorerecommendations.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project2.musicstorerecommendations.model.AlbumRecommendation;
 import com.project2.musicstorerecommendations.model.ArtistRecommendation;
 import com.project2.musicstorerecommendations.repository.ArtistRecommendationRepository;
 import org.junit.Before;
@@ -118,8 +119,8 @@ public class ArtistRecommendationControllerTest {
 
     @Test
     public void shouldReturn204StatusWithUpdate() throws Exception {
-        when(artistRecommRepo.save(inputRecomm2)).thenReturn(null);
-        String inJson = mapper.writeValueAsString(inputRecomm2);
+        when(artistRecommRepo.save(outputRecomm2)).thenReturn(null);
+        String inJson = mapper.writeValueAsString(outputRecomm2);
         mockMvc.perform(
                         put("/artistrecommendation")
                                 .content(inJson)
@@ -136,6 +137,43 @@ public class ArtistRecommendationControllerTest {
         mockMvc.perform(
                         put("/artistrecommendation")
                                 .content(inJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shouldReturn422StatusCreateArtistRecommWithMissingProperties() throws Exception {
+        ArtistRecommendation badInputRequest = inputRecomm2;
+        badInputRequest.setArtistId(null);
+
+
+        String badInputJson = mapper.writeValueAsString(badInputRequest);
+
+        doReturn(new IllegalArgumentException("No artist id found, unable to create")).when(artistRecommRepo).save(badInputRequest);
+
+        mockMvc.perform(
+                        post("/artistrecommendation")
+                                .content(badInputJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+    @Test
+    public void shouldReturn422StatusUpdateArtistRecommWithMissingProperties() throws Exception {
+        ArtistRecommendation badInputRequest = inputRecomm2;
+        badInputRequest.setUserId(null);
+
+
+        String badInputJson = mapper.writeValueAsString(badInputRequest);
+
+        doReturn(new IllegalArgumentException("No user id found, unable to update")).when(artistRecommRepo).save(badInputRequest);
+
+        mockMvc.perform(
+                        put("/artistrecommendation")
+                                .content(badInputJson)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())

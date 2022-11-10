@@ -20,7 +20,6 @@ public class AlbumRecommendationRepositoryTest {
     @Autowired
     AlbumRecommendationRepository albumRecommendationRepository;
     private AlbumRecommendation albumRecomm1;
-
     private AlbumRecommendation albumRecomm2;
 
     @Before

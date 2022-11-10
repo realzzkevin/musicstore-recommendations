@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,14 +34,18 @@ public class LabelRecommendationController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public LabelRecommendation addLabelRecommendation(@RequestBody LabelRecommendation labelRecomm) {
+    public LabelRecommendation addLabelRecommendation(@RequestBody @Valid LabelRecommendation labelRecomm) {
         return repo.save(labelRecomm);
     }
 
     @PutMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateLabelRecommendation(@RequestBody LabelRecommendation labelRecomm) {
-        repo.save(labelRecomm);
+    public void updateLabelRecommendation(@RequestBody @Valid LabelRecommendation labelRecomm) {
+        if(labelRecomm.getId() != null) {
+            repo.save(labelRecomm);
+        } else {
+            throw new IllegalArgumentException("label recommendation id not present");
+        }
     }
 
     @DeleteMapping("/{id}")

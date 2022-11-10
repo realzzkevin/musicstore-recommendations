@@ -1,6 +1,7 @@
 package com.project2.musicstorerecommendations.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project2.musicstorerecommendations.model.ArtistRecommendation;
 import com.project2.musicstorerecommendations.model.LabelRecommendation;
 import com.project2.musicstorerecommendations.repository.LabelRecommendationRepository;
 import org.junit.Before;
@@ -116,8 +117,8 @@ public class LabelRecommendationControllerTest {
 
     @Test
     public void shouldReturn204StatusWithUpdate() throws Exception {
-        when(labelRecommRepo.save(inputRecomm2)).thenReturn(null);
-        String inJson = mapper.writeValueAsString(inputRecomm2);
+        when(labelRecommRepo.save(outputRecomm2)).thenReturn(null);
+        String inJson = mapper.writeValueAsString(outputRecomm2);
         mockMvc.perform(
                         put("/labelrecommendation")
                                 .content(inJson)
@@ -134,6 +135,43 @@ public class LabelRecommendationControllerTest {
         mockMvc.perform(
                         put("/labelrecommendation")
                                 .content(inJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shouldReturn422StatusCreateLabelRecommWithMissingProperties() throws Exception {
+        LabelRecommendation badInputRequest = inputRecomm2;
+        badInputRequest.setLabelId(null);
+
+
+        String badInputJson = mapper.writeValueAsString(badInputRequest);
+
+        doReturn(new IllegalArgumentException("No Label id found, unable to create")).when(labelRecommRepo).save(badInputRequest);
+
+        mockMvc.perform(
+                        post("/labelrecommendation")
+                                .content(badInputJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+    @Test
+    public void shouldReturn422StatusUpdateLabelRecommWithMissingProperties() throws Exception {
+        LabelRecommendation badInputRequest = inputRecomm2;
+        badInputRequest.setUserId(null);
+
+
+        String badInputJson = mapper.writeValueAsString(badInputRequest);
+
+        doReturn(new IllegalArgumentException("No user id found, unable to update")).when(labelRecommRepo).save(badInputRequest);
+
+        mockMvc.perform(
+                        put("/labelrecommendation")
+                                .content(badInputJson)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())

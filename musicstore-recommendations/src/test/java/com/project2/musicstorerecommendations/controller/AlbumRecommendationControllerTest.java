@@ -117,8 +117,8 @@ public class AlbumRecommendationControllerTest {
 
     @Test
     public void shouldReturn204StatusWithUpdate() throws Exception {
-        when(albumRecommRepo.save(inputRecomm2)).thenReturn(null);
-        String inJson = mapper.writeValueAsString(inputRecomm2);
+        when(albumRecommRepo.save(outputRecomm2)).thenReturn(null);
+        String inJson = mapper.writeValueAsString(outputRecomm2);
         mockMvc.perform(
                         put("/albumrecommendation")
                                 .content(inJson)
@@ -126,6 +126,42 @@ public class AlbumRecommendationControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().isNoContent());
+    }
+    @Test
+    public void shouldReturn422StatusCreateAlbumRecommWithMissingProperties() throws Exception {
+        AlbumRecommendation badInputRequest = inputRecomm2;
+        badInputRequest.setAlbumId(null);
+
+
+        String badInputJson = mapper.writeValueAsString(badInputRequest);
+
+        doReturn(new IllegalArgumentException("No album id found, unable to create")).when(albumRecommRepo).save(badInputRequest);
+
+        mockMvc.perform(
+                        post("/albumrecommendation")
+                                .content(badInputJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+    @Test
+    public void shouldReturn422StatusUpdateAlbumRecommWithMissingProperties() throws Exception {
+        AlbumRecommendation badInputRequest = inputRecomm2;
+        badInputRequest.setAlbumId(null);
+
+
+        String badInputJson = mapper.writeValueAsString(badInputRequest);
+
+        doReturn(new IllegalArgumentException("No album id found, unable to update")).when(albumRecommRepo).save(badInputRequest);
+
+        mockMvc.perform(
+                        put("/albumrecommendation")
+                                .content(badInputJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

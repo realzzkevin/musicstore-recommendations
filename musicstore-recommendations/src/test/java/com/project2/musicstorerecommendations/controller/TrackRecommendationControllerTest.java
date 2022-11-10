@@ -1,6 +1,7 @@
 package com.project2.musicstorerecommendations.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project2.musicstorerecommendations.model.LabelRecommendation;
 import com.project2.musicstorerecommendations.model.TrackRecommendation;
 import com.project2.musicstorerecommendations.repository.TrackRecommendationRepository;
 import org.junit.Before;
@@ -118,8 +119,8 @@ public class TrackRecommendationControllerTest {
 
     @Test
     public void shouldReturn204StatusWithUpdate() throws Exception {
-        when(trackRecommRepo.save(inputRecomm2)).thenReturn(null);
-        String inJson = mapper.writeValueAsString(inputRecomm2);
+        when(trackRecommRepo.save(outputRecomm2)).thenReturn(null);
+        String inJson = mapper.writeValueAsString(outputRecomm2);
         mockMvc.perform(
                         put("/trackrecommendation")
                                 .content(inJson)
@@ -136,6 +137,43 @@ public class TrackRecommendationControllerTest {
         mockMvc.perform(
                         put("/trackrecommendation")
                                 .content(inJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void shouldReturn422StatusCreatTrackRecommWithMissingProperties() throws Exception {
+        TrackRecommendation badInputRequest = inputRecomm2;
+        badInputRequest.setTrackId(null);
+
+
+        String badInputJson = mapper.writeValueAsString(badInputRequest);
+
+        doReturn(new IllegalArgumentException("No Track id found, unable to create")).when(trackRecommRepo).save(badInputRequest);
+
+        mockMvc.perform(
+                        post("/trackrecommendation")
+                                .content(badInputJson)
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+    @Test
+    public void shouldReturn422StatusUpdateTrackRecommWithMissingProperties() throws Exception {
+        TrackRecommendation badInputRequest = inputRecomm2;
+        badInputRequest.setUserId(null);
+
+
+        String badInputJson = mapper.writeValueAsString(badInputRequest);
+
+        doReturn(new IllegalArgumentException("No user id found, unable to update")).when(trackRecommRepo).save(badInputRequest);
+
+        mockMvc.perform(
+                        put("/trackrecommendation")
+                                .content(badInputJson)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
